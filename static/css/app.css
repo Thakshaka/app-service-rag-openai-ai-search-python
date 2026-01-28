@@ -150,3 +150,37 @@ html, body {
         width: 95%;
     }
 }
+
+/* Markdown formatting styles */
+.message-content ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.message-content li {
+    margin: 0.25rem 0;
+    line-height: 1.6;
+}
+
+.message-content strong {
+    font-weight: 600;
+    color: #212529;
+}
+
+.message-content em {
+    font-style: italic;
+}
+
+.message-content code {
+    background-color: #f8f9fa;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875em;
+    color: #d63384;
+}
+
+.message-content br {
+    line-height: 1.5;
+}

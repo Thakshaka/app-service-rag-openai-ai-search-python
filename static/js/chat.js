@@ -13,6 +13,44 @@
  * 3. Interactive citations from source documents
  * 4. Responsive design for various screen sizes
  */
+
+/**
+ * Converts markdown formatting to HTML
+ * Handles: bold, italic, lists, code blocks, line breaks
+ */
+function convertMarkdownToHtml(text) {
+    if (!text) return '';
+    
+    let html = text;
+    
+    // Convert bold text: **text** or __text__ to <strong>text</strong>
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    
+    // Convert italic text: *text* or _text_ to <em>text</em>
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    
+    // Convert inline code: `code` to <code>code</code>
+    html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+    
+    // Convert unordered lists: - item or * item
+    html = html.replace(/^[\-\*]\s+(.+)$/gm, '<li>$1</li>');
+    
+    // Wrap consecutive <li> tags in <ul>
+    html = html.replace(/(<li>.*<\/li>\s*)+/g, (match) => {
+        return '<ul>' + match + '</ul>';
+    });
+    
+    // Convert numbered lists: 1. item
+    html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+    
+    // Convert line breaks
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Elements
     const chatForm = document.getElementById('chat-form');
@@ -46,9 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     chatForm.addEventListener('submit', handleChatSubmit);
     chatInput.addEventListener('keydown', handleKeyDown);
-    btnPersonalInfo.addEventListener('click', () => sendQuickQuestion("What does Contoso do with my personal information?"));
-    btnWarranty.addEventListener('click', () => sendQuickQuestion("How do I file a warranty claim?"));
-    btnCompany.addEventListener('click', () => sendQuickQuestion("Tell me about your company."));
+    btnPersonalInfo.addEventListener('click', () => sendQuickQuestion("Tell me about ProjeX"));
+    btnWarranty.addEventListener('click', () => sendQuickQuestion("What are your solutions?"));
+    btnCompany.addEventListener('click', () => sendQuickQuestion("How to setup project?"));
     
     /**
      * Handles form submission when the user sends a message
@@ -135,8 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (citations && citations.length > 0) {
                 // Replace [doc1], [doc2], etc. with interactive citation links
-                const pattern = /\[doc(\d+)\]/g;
-                formattedContent = formattedContent.replace(pattern, (match, index) => {
+                const docPattern = /\[doc(\d+)\]/g;
+                formattedContent = formattedContent.replace(docPattern, (match, index) => {
                     const idx = parseInt(index);
                     if (idx > 0 && idx <= citations.length) {
                         const citation = citations[idx - 1];
@@ -155,9 +193,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     return match;
                 });
+                
+                // Also handle filename-based citations like [filename.md]
+                const filenamePattern = /\[([^\]]+\.(md|txt|pdf|docx?))\]/gi;
+                formattedContent = formattedContent.replace(filenamePattern, (match, filename) => {
+                    // Find the citation index by matching the filename
+                    const citationIndex = citations.findIndex(c => 
+                        c.filePath?.toLowerCase().includes(filename.toLowerCase()) ||
+                        c.title?.toLowerCase().includes(filename.toLowerCase())
+                    );
+                    
+                    if (citationIndex !== -1) {
+                        const idx = citationIndex + 1;
+                        const citation = citations[citationIndex];
+                        const citationData = JSON.stringify({
+                            title: citation.title || filename,
+                            content: citation.content || '',
+                            filePath: citation.filePath || filename,
+                            url: citation.url || ''
+                        });
+                        
+                        // Store citation data in this message's citations
+                        messageCitations[idx] = citationData;
+                        
+                        // Create badge-style citation link with the index number
+                        return `<a class="badge bg-primary rounded-pill" style="cursor: pointer;" data-message-id="${messageId}" data-index="${idx}">${idx}</a>`;
+                    }
+                    return match;
+                });
             }
             
-            messageContent.innerHTML = formattedContent.replace(/\n/g, '<br>');
+            // Convert markdown to HTML
+            formattedContent = convertMarkdownToHtml(formattedContent);
+            messageContent.innerHTML = formattedContent;
             
             // Store the message citations as a data attribute
             messageDiv.setAttribute('data-citations', JSON.stringify(messageCitations));

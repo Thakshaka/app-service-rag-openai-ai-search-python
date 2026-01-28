@@ -7,7 +7,7 @@ your enterprise data stored in Azure AI Search.
 """
 import logging
 from typing import List
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+# from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from openai import AsyncAzureOpenAI
 from app.models.chat_models import ChatMessage
 from app.config import settings
@@ -21,7 +21,7 @@ class RagChatService:
     by connecting Azure OpenAI with Azure AI Search for grounded responses.
     
     This service:
-    1. Handles authentication to Azure services using Managed Identity
+    1. Handles authentication to Azure services using Managed Identity / API keys
     2. Implements the "On Your Data" pattern using Azure AI Search as a data source
     3. Processes user queries and returns AI-generated responses grounded in your data
     """
@@ -29,27 +29,32 @@ class RagChatService:
     def __init__(self):
         """Initialize the RAG chat service using settings from app config"""
         # Store settings for easy access
+        self.openai_api_key = settings.azure_openai_api_key
         self.openai_endpoint = settings.azure_openai_endpoint
         self.gpt_deployment = settings.azure_openai_gpt_deployment
         self.embedding_deployment = settings.azure_openai_embedding_deployment
+        self.openai_api_version = settings.azure_openai_api_version
+        self.search_admin_key = settings.azure_search_admin_key
         self.search_url = settings.azure_search_service_url
         self.search_index_name = settings.azure_search_index_name
         self.system_prompt = settings.system_prompt
         
         # Create Azure credentials for managed identity
         # This allows secure, passwordless authentication to Azure services
-        self.credential = DefaultAzureCredential()
-        token_provider = get_bearer_token_provider(
-            self.credential,
-            "https://cognitiveservices.azure.com/.default"
-        )
+        # self.credential = DefaultAzureCredential()
+        # token_provider = get_bearer_token_provider(
+        #     self.credential,
+        #     "https://cognitiveservices.azure.com/.default"
+        # )
         
         # Create Azure OpenAI client
         # We use the latest Azure OpenAI Python SDK with async support
         self.openai_client = AsyncAzureOpenAI(
             azure_endpoint=self.openai_endpoint,
-            azure_ad_token_provider=token_provider,
-            api_version="2024-10-21"
+            # azure_ad_token_provider=token_provider,
+            # api_version="2024-10-21"
+            api_key=self.openai_api_key,
+            api_version=self.openai_api_version
         )
         
         logger.info("RagChatService initialized with environment variables")
@@ -91,7 +96,7 @@ class RagChatService:
                 })
             
             # Configure Azure AI Search data source according to the "On Your Data" pattern
-            # This connects Azure OpenAI directly to your search index without needing to
+            # This connects Azure OpenAI directly to the search index without needing to
             # manually implement vector search, chunking, or semantic rankers
             data_source = {
                 "type": "azure_search",
@@ -99,7 +104,9 @@ class RagChatService:
                     "endpoint": self.search_url,
                     "index_name": self.search_index_name,
                     "authentication": {
-                        "type": "system_assigned_managed_identity"
+                        # "type": "system_assigned_managed_identity"
+                        "type": "api_key",
+                        "key": self.search_admin_key
                     },
                     # Combines vector and traditional search
                     "query_type": "vector_semantic_hybrid",

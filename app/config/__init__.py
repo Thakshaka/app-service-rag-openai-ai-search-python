@@ -31,17 +31,24 @@ class SearchSettings(BaseModel):
 class AppSettings(BaseSettings):
     """Application settings with environment variable loading capabilities"""
     # Azure OpenAI Settings
+    azure_openai_api_key: str = Field(..., env="AZURE_OPENAI_API_KEY")
     azure_openai_endpoint: str = Field(..., env="AZURE_OPENAI_ENDPOINT")
     azure_openai_gpt_deployment: str = Field(..., env="AZURE_OPENAI_GPT_DEPLOYMENT")
     azure_openai_embedding_deployment: str = Field("", env="AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+    azure_openai_api_version: str = Field("", env="AZURE_OPENAI_API_VERSION")
     
     # Azure AI Search Settings
+    azure_search_admin_key: str = Field(..., env="AZURE_SEARCH_ADMIN_KEY")
     azure_search_service_url: str = Field(..., env="AZURE_SEARCH_SERVICE_URL")
     azure_search_index_name: str = Field(..., env="AZURE_SEARCH_INDEX_NAME")
     
     # Other settings
+    # system_prompt: str = Field(
+    #     "You are an AI assistant that helps people find information from their documents. Always cite your sources using the document title.",
+    #     env="SYSTEM_PROMPT"
+    # )
     system_prompt: str = Field(
-        "You are an AI assistant that helps people find information from their documents. Always cite your sources using the document title.",
+        ...,
         env="SYSTEM_PROMPT"
     )
     
@@ -54,7 +61,7 @@ class AppSettings(BaseSettings):
         case_sensitive = False
         env_nested_delimiter = "__"
         # Setting env_priority to True prioritizes environment variables over .env file
-        env_priority = True
+        env_priority = False
     
     @property
     def openai(self) -> OpenAISettings:
