@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjeX Assistant Demonstration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #2977C9 0%, #1e5a9e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .info ul {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+        }
+
+        .info li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>ProjeX Assistant Demonstration</h1>
+        <p>Click the chat button in the bottom-right corner to get started</p>
+
+        <div class="info">
+            <h2>Try asking about:</h2>
+            <ul>
+                <li>What is ProjeX?</li>
+                <li>How do I start a project?</li>
+                <li>Project management features</li>
+                <li>Team collaboration tools</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- The ProjeX Chat Widget -->
+    <projex-chat api-url="http://127.0.0.1:8000" title="ProjeX Assistant" placeholder="Write a message"
+        welcome-message="Hi there. With the help of AI, I can answer questions about ProjeX or connect you to our team. Not sure where to start? You can try:"
+        suggestions='["What is ProjeX?", "How do I start a project?"]' show-citations="true" index-name="faq-vector"
+        system-prompt="You are a helpful ProjeX assistant. Answer questions about ProjeX products and services."></projex-chat>
+
+    <!-- Load the Web Component -->
+    <script src="../src/projex-chat.js"></script>
+</body>
+
+</html>

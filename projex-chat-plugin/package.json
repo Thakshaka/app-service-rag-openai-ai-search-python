@@ -1,0 +1,26 @@
+{
+    "name": "projex-chat-plugin",
+    "version": "1.0.0",
+    "description": "Embeddable AI chat widget for ProjeX",
+    "main": "projex-chat.js",
+    "scripts": {
+        "build": "node -e \"require('fs').copyFileSync('src/projex-chat.js', 'projex-chat.js')\"",
+        "dev": "echo 'Open examples/demo.html in your browser'",
+        "deploy": "echo 'Push to main branch to trigger GitHub Actions deployment'"
+    },
+    "keywords": [
+        "chat",
+        "widget",
+        "web-component",
+        "ai",
+        "assistant"
+    ],
+    "author": "ProjeX Team",
+    "license": "MIT",
+    "files": [
+        "projex-chat.js",
+        "index.html",
+        "staticwebapp.config.json",
+        "examples/"
+    ]
+}

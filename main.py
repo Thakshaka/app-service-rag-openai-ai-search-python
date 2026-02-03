@@ -70,16 +70,25 @@ async def chat_completion(chat_request: ChatRequest):
     
     This endpoint:
     1. Receives the chat history from the client
-    2. Passes it to the RAG service for processing
-    3. Returns AI-generated responses with citations
-    4. Handles errors gracefully with user-friendly messages
+    2. Optionally receives an index_name to specify which Azure AI Search index to use
+    3. Passes it to the RAG service for processing
+    4. Returns AI-generated responses with citations
+    5. Handles errors gracefully with user-friendly messages
     """
     try:
         if not chat_request.messages:
             raise HTTPException(status_code=400, detail="Messages cannot be empty")
         
-        # Get chat completion from RAG service
-        response = await rag_chat_service.get_chat_completion(chat_request.messages)
+        # Log the index being used
+        index_info = f" with index '{chat_request.index_name}'" if chat_request.index_name else " with default index"
+        logger.info(f"Processing chat request{index_info}")
+        
+        # Get chat completion from RAG service, passing the optional index_name and system_prompt
+        response = await rag_chat_service.get_chat_completion(
+            chat_request.messages,
+            index_name=chat_request.index_name,
+            system_prompt=chat_request.system_prompt
+        )
         
         return response
         

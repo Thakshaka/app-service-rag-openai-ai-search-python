@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjeX Chat Plugin - Vanilla JS Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .demo-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #0052a3;
+        }
+
+        .event-log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .event-log div {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ProjeX Chat Plugin</h1>
+    <p class="subtitle">Vanilla JavaScript Example - Drop-in Chat Widget</p>
+
+    <!-- Example 1: Basic Usage -->
+    <div class="demo-section">
+        <h2>1. Basic Usage (Bottom-Right Widget)</h2>
+        <p>The simplest way to add the chat widget to your page:</p>
+
+        <div class="code-block">
+            <code>&lt;script src="../src/projex-chat.js"&gt;&lt;/script&gt;<br>
+&lt;projex-chat api-url="https://your-api.vercel.app"&gt;&lt;/projex-chat&gt;</code>
+        </div>
+
+        <p><strong>Result:</strong> A floating chat button appears in the bottom-right corner. Click it to open the
+            chat!</p>
+    </div>
+
+    <!-- Example 2: Customization -->
+    <div class="demo-section">
+        <h2>2. Customization Options</h2>
+        <p>Customize the appearance and behavior:</p>
+
+        <div class="code-block">
+            <code>&lt;projex-chat<br>
+&nbsp;&nbsp;api-url="https://your-api.vercel.app"<br>
+&nbsp;&nbsp;theme="dark"<br>
+&nbsp;&nbsp;title="Custom Assistant"<br>
+&nbsp;&nbsp;placeholder="Ask me anything..."<br>
+&nbsp;&nbsp;quick-questions='["Question 1", "Question 2"]'<br>
+&nbsp;&nbsp;open<br>
+&gt;&lt;/projex-chat&gt;</code>
+        </div>
+    </div>
+
+    <!-- Example 3: Programmatic Control -->
+    <div class="demo-section">
+        <h2>3. Programmatic Control</h2>
+        <p>Control the chat widget with JavaScript:</p>
+
+        <div class="controls">
+            <button onclick="openChat()">Open Chat</button>
+            <button onclick="closeChat()">Close Chat</button>
+            <button onclick="toggleChat()">Toggle Chat</button>
+            <button onclick="sendMessage()">Send Message</button>
+            <button onclick="clearHistory()">Clear History</button>
+            <button onclick="getHistory()">Get History</button>
+        </div>
+
+        <div class="code-block">
+            <code>const chat = document.querySelector('projex-chat');<br>
+<br>
+// Open/close<br>
+chat.open();<br>
+chat.close();<br>
+chat.toggle();<br>
+<br>
+// Send message<br>
+chat.sendMessage("Tell me about ProjeX");<br>
+<br>
+// Clear history<br>
+chat.clearHistory();<br>
+<br>
+// Get history<br>
+const history = chat.getHistory();</code>
+        </div>
+    </div>
+
+    <!-- Example 4: Event Listeners -->
+    <div class="demo-section">
+        <h2>4. Event Listeners</h2>
+        <p>Listen to chat events:</p>
+
+        <div class="code-block">
+            <code>chat.addEventListener('message-sent', (e) => {<br>
+&nbsp;&nbsp;console.log('User sent:', e.detail.message);<br>
+});<br>
+<br>
+chat.addEventListener('response-received', (e) => {<br>
+&nbsp;&nbsp;console.log('AI responded:', e.detail.response);<br>
+});<br>
+<br>
+chat.addEventListener('error', (e) => {<br>
+&nbsp;&nbsp;console.error('Error:', e.detail.error);<br>
+});</code>
+        </div>
+
+        <p><strong>Event Log:</strong></p>
+        <div class="event-log" id="eventLog">
+            <div>Waiting for events...</div>
+        </div>
+    </div>
+
+    <!-- Example 5: Theming -->
+    <div class="demo-section">
+        <h2>5. Custom Theming with CSS Variables</h2>
+        <p>Override default colors and styles:</p>
+
+        <div class="code-block">
+            <code>&lt;style&gt;<br>
+&nbsp;&nbsp;projex-chat {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--primary-color: #ff6b6b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--background: #ffffff;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--text-color: #333333;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--border-radius: 20px;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--max-width: 500px;<br>
+&nbsp;&nbsp;}<br>
+&lt;/style&gt;</code>
+        </div>
+    </div>
+
+    <!-- The actual chat widget -->
+    <projex-chat api-url="http://127.0.0.1:8000" title="ProjeX Assistant (Preview)" placeholder="Write a message"
+        welcome-message="Hi there. With the help of AI, I can answer questions about ProjeX or connect you to our team. Not sure where to start? You can try:"
+        suggestions='["What is ProjeX?", "How do I start a project?"]'></projex-chat>
+
+    <!-- Load the Web Component -->
+    <script src="../src/projex-chat.js"></script>
+
+    <!-- Demo JavaScript -->
+    <script>
+        const chat = document.querySelector('projex-chat');
+        const eventLog = document.getElementById('eventLog');
+
+        // Control functions
+        function openChat() {
+            chat.open();
+        }
+
+        function closeChat() {
+            chat.close();
+        }
+
+        function toggleChat() {
+            chat.toggle();
+        }
+
+        function sendMessage() {
+            chat.sendMessage("Tell me about ProjeX");
+        }
+
+        function clearHistory() {
+            chat.clearHistory();
+            logEvent('History cleared');
+        }
+
+        function getHistory() {
+            const history = chat.getHistory();
+            console.log('Chat history:', history);
+            logEvent(`Retrieved ${history.length} messages`);
+        }
+
+        // Event listeners
+        chat.addEventListener('chat-opened', () => {
+            logEvent('Chat opened');
+        });
+
+        chat.addEventListener('chat-closed', () => {
+            logEvent('Chat closed');
+        });
+
+        chat.addEventListener('message-sent', (e) => {
+            logEvent(`User: ${e.detail.message}`);
+        });
+
+        chat.addEventListener('response-received', (e) => {
+            logEvent(`AI: ${e.detail.response.content.substring(0, 50)}...`);
+        });
+
+        chat.addEventListener('error', (e) => {
+            logEvent(`Error: ${e.detail.error}`, 'error');
+        });
+
+        chat.addEventListener('history-cleared', () => {
+            logEvent('History cleared');
+        });
+
+        chat.addEventListener('citation-clicked', (e) => {
+            logEvent(`Citation clicked: ${e.detail.citation.title}`);
+        });
+
+        function logEvent(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : '#00ff00';
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.textContent = `[${timestamp}] ${message}`;
+            eventLog.appendChild(div);
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        // Clear initial message
+        setTimeout(() => {
+            eventLog.innerHTML = '';
+            logEvent('Ready! Try interacting with the chat widget.');
+        }, 1000);
+    </script>
+</body>
+
+</html>

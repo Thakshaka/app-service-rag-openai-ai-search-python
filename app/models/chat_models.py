@@ -28,3 +28,5 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     """Chat completion request model for the API endpoint"""
     messages: List[ChatMessage] = Field(..., description="List of chat messages")
+    index_name: str | None = Field(None, description="Optional Azure AI Search index name to use for this request")
+    system_prompt: str | None = Field(None, description="Optional system prompt to customize AI behavior")
