@@ -19,6 +19,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.models.chat_models import ChatRequest
 
@@ -37,6 +38,15 @@ app = FastAPI(
     title="FastAPI RAG with Azure OpenAI and Azure AI Search",
     description="A FastAPI application that demonstrates retrieval augmented generation using Azure OpenAI and Azure AI Search.",
     version="1.0.0",
+)
+
+# Add CORS middleware to allow requests from the chat widget
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Mount static files
